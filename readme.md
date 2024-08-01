@@ -24,15 +24,6 @@ pip install future tensorboard
   ```bash
   python tools/convert_models/convert_dinov2.py checkpoints/dinov2_vitl14_pretrain.pth checkpoints/dinov2_converted_1024x1024.pth --height 1024 --width 1024
   ```
-## Evaluation
-  Run the evaluation:
-  ```
-  python tools/test.py configs/dinov2/rein_dinov2_mask2former_512x512_bs1x4.py checkpoints/dinov2_rein_and_head.pth --backbone dinov2_converted.pth
-  ```
-  For most of provided release checkpoints, you can run this command to evluate
-  ```
-  python tools/test.py /path/to/cfg /path/to/checkpoint --backbone /path/to/dinov2_converted.pth #(or dinov2_converted_1024x1024.pth)
-  ```
 
 ## Training
 Start training in single GPU:
@@ -43,6 +34,14 @@ Start training in multiple GPU:
 ```
 PORT=12345 CUDA_VISIBLE_DEVICES=1,2,3,4 bash tools/dist_train.sh configs/dinov2/rein_dinov2_mask2former_1024x1024_bs4x2.py NUM_GPUS
 ```
+
+## Inference
+
+```
+python tools/visualize.py configs/dinov2/rein_dinov2_mask2former_512x512_bs1x4.py /PATH/TO/FINAL/CHECKPOINT/iter_40000.pth /INFERENCE/DATASET/images --suffix ".jpg" --backbone "/PATH/TO/FACEBOOK/BACKBONE/dinov2_converted.pth" --save_dir "/DIRECTORY/TO/STORE/PREDICTIONS"
+
+```
+
 
 ## Generate full weights
 Because we only fine-tune and save the REIN and head weights, if you need a complete set of segmentor weights, you need to use this script:
