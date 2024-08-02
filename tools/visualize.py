@@ -139,8 +139,9 @@ def main():
         vis.paste(img, (0, 0))
         vis.paste(pred, (img.width, 0))
         save_image = args.save_dir + "/images"
+        save_numpy = args.save_dir + "/numpy"
         vis.save(osp.join(save_image, osp.basename(im_path)))
-        save_path = osp.join(args.save_dir, osp.basename(im_path).replace('.jpg', '.npy'))
+        save_path = osp.join(save_numpy, osp.basename(im_path).replace('.jpg', '.npy'))
         np.save(save_path, logits_class_1)
     print(f"Results are saved in {args.save_dir}")
 
