@@ -1,5 +1,5 @@
 crop_size = (512, 512)
-num_classes = 19
+num_classes = 2
 model = dict(
     type="EncoderDecoder",
     data_preprocessor=dict(
