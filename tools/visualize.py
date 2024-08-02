@@ -71,6 +71,23 @@ def draw_sem_seg(sem_seg: torch.Tensor):
     return result.cpu().numpy()
 
 
+
+def draw_sem_seg_npy(sem_seg: torch.Tensor) -> np.ndarray:
+    """
+    Convert a semantic segmentation tensor into a NumPy array of raw prediction values.
+    
+    Args:
+        sem_seg (torch.Tensor): A tensor containing semantic segmentation predictions.
+        
+    Returns:
+        np.ndarray: A NumPy array containing the raw prediction values.
+    """
+    # Remove the batch dimension if present
+    sem_seg = sem_seg.data
+    
+    # Convert tensor to NumPy array
+    return sem_seg.cpu().numpy()
+
 def main():
     args = parse_args()
 
@@ -94,7 +111,7 @@ def main():
     state_dict = model.state_dict()
     load_backbone(state_dict, args.backbone)
     model.load_state_dict(state_dict)
-    mmengine.mkdir_or_exist(args.save_dir)
+    mmengine.mkdir_or_exist("/glb/hou/pt.sgs/data/ml_ai_us/uspcjc/codes/Rein/work_dirs/show/new")
     images = []
     if osp.isfile(args.images):
         images.append(args.images)
@@ -107,7 +124,13 @@ def main():
     print(f"Collect {len(images)} images")
     for im_path in tqdm.tqdm(images):
         result = inference_model(model, im_path)
+        # print("Result is" , result)
+        # print("Result new  is" , type(result.seg_logits))
         pred = draw_sem_seg(result.pred_sem_seg)
+        predid_numpy = draw_sem_seg_npy(result.pred_sem_seg)
+        pred_numpy = draw_sem_seg_npy(result.seg_logits)
+        # Get logits for class 1
+        logits_class_1 = pred_numpy[1, :, :]
         img = Image.open(im_path).convert("RGB")
         pred = Image.fromarray(pred).resize(
             [img.width, img.height], resample=Image.NEAREST
@@ -115,7 +138,10 @@ def main():
         vis = Image.new("RGB", [img.width * 2, img.height])
         vis.paste(img, (0, 0))
         vis.paste(pred, (img.width, 0))
-        vis.save(osp.join(args.save_dir, osp.basename(im_path)))
+        save_image = args.save_dir + "/images"
+        vis.save(osp.join(save_image, osp.basename(im_path)))
+        save_path = osp.join(args.save_dir, osp.basename(im_path).replace('.jpg', '.npy'))
+        np.save(save_path, logits_class_1)
     print(f"Results are saved in {args.save_dir}")
 
 
