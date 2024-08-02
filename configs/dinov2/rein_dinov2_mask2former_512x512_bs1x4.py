@@ -1,6 +1,6 @@
 # dataset config
 _base_ = [
-    "../_base_/datasets/dg_gta_512x512.py",
+    "../_base_/datasets/topsalt_512x512copy.py",
     "../_base_/default_runtime.py",
     "../_base_/models/rein_dinov2_mask2former.py"
 ]
@@ -57,3 +57,6 @@ default_hooks = dict(
     sampler_seed=dict(type="DistSamplerSeedHook"),
     visualization=dict(type="SegVisualizationHook"),
 )
+
+
+
