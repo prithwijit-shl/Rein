@@ -59,9 +59,6 @@ def parse_args():
         help="job launcher",
     )
     parser.add_argument("--tta", action="store_true", help="Test time augmentation")
-    # When using PyTorch version >= 2.0.0, the `torch.distributed.launch`
-    # will pass the `--local-rank` parameter to `tools/train.py` instead
-    # of `--local_rank`.
     parser.add_argument("--local_rank", "--local-rank", type=int, default=0)
     args = parser.parse_args()
     if "LOCAL_RANK" not in os.environ:
@@ -75,11 +72,6 @@ def trigger_visualization_hook(cfg, args):
     if "visualization" in default_hooks:
         visualization_hook = default_hooks["visualization"]
         visualization_hook["interval"] = 1
-        # Turn on visualization
-        # visualization_hook['draw'] = True
-        # if args.show:
-        #     visualization_hook['show'] = True
-        #     visualization_hook['wait_time'] = args.wait_time
         if args.show_dir:
             visulizer = cfg.visualizer
             visulizer["save_dir"] = args.show_dir
